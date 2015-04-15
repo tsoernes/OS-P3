@@ -18,3 +18,7 @@ different event types. Think object oriented programming.
 -There will always be an event of type NEW_PROCESS in the event queue. Why?
 
 -Run the simula%on with different parameters. Create a table or sheet with the results 
+
+-Complete the partial solution. This involves completing the classes Process, Simulator, Cpu and Io
+
+-The Cpu and Io classes will resemble the Memory class, but are a bit more complicated
