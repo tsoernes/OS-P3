@@ -21,6 +21,9 @@ public class Simulator implements Constants
 	private long avgArrivalInterval;
 	// Add member variables as needed
 
+	private Queue cpuQueue, ioQueue;
+	private long maxCpuTime, avgIoTime;
+
 	/**
 	 * Constructs a scheduling simulator with the given parameters.
 	 * @param memoryQueue			The memory queue to be used.
@@ -43,6 +46,11 @@ public class Simulator implements Constants
 		memory = new Memory(memoryQueue, memorySize, statistics);
 		clock = 0;
 		// Add code as needed
+
+		this.cpuQueue = cpuQueue;
+		this.ioQueue = ioQueue;
+		this.maxCpuTime = maxCpuTime;
+		this.avgIoTime = avgIoTime;
     }
 
     /**
