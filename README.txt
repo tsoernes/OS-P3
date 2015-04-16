@@ -17,4 +17,4 @@ different event types. Think object oriented programming.
 
 -There will always be an event of type NEW_PROCESS in the event queue. Why?
 
--Run the simula%on with different parameters. Create a table or sheet with the results 
+-Run the simulation with different parameters. Create a table or sheet with the results 

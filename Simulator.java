@@ -139,6 +139,7 @@ public class Simulator implements Constants
 		while(p != null) {
 			
 			// TODO: Add this process to the CPU queue!
+
 			// Also add new events to the event queue if needed
 
 			// Since we haven't implemented the CPU and I/O device yet,
