@@ -68,6 +68,9 @@ public class Process implements Constants
 		int green = 64+(int)((processId*47)%128);
 		int blue = 64+(int)((processId*53)%128);
 		color = new Color(red, green, blue);
+
+        // own
+        timeToNextIoOperation = avgIoInterval;
 	}
 
 	/**
@@ -117,5 +120,39 @@ public class Process implements Constants
 		statistics.nofCompletedProcesses++;
 	}
 
-	// Add more methods as needed
+    // Add more methods as needed
+
+    public long getCpuTimeNeeded() {
+        return cpuTimeNeeded;
+    }
+
+    public void setCpuTimeNeeded(long cpuTimeNeeded) {
+        this.cpuTimeNeeded = cpuTimeNeeded;
+    }
+
+    public long getTimeToNextIoOperation() {
+        return timeToNextIoOperation;
+    }
+
+    public void setTimeToNextIoOperation(long timeToNextIoOperation) {
+        this.timeToNextIoOperation = timeToNextIoOperation;
+    }
+
+    public long generateNewIotime(){
+        this.avgIoInterval = (1 + (long)(Math.random()*25))*cpuTimeNeeded/100;
+        return avgIoInterval;
+    }
+
+    public long removeFromNeededCpu(long cpuRunnedTime){
+        this.cpuTimeNeeded -= cpuRunnedTime;
+        return this.cpuTimeNeeded;
+    }
+    @Override
+    public String toString() {
+        return "Process{" +
+                "cpuTimeNeeded=" + cpuTimeNeeded +
+                ", processId=" + processId +
+                ", timeToNextIoOperation=" + timeToNextIoOperation +
+                '}';
+    }
 }

@@ -20,9 +20,9 @@ public class Simulator implements Constants
 	/** The average length between process arrivals */
 	private long avgArrivalInterval;
 	// Add member variables as needed
+    private Cpu cpu;
+    private Io io;
 
-	private Queue cpuQueue, ioQueue;
-	private long maxCpuTime, avgIoTime;
 
 	/**
 	 * Constructs a scheduling simulator with the given parameters.
@@ -45,12 +45,10 @@ public class Simulator implements Constants
 		eventQueue = new EventQueue();
 		memory = new Memory(memoryQueue, memorySize, statistics);
 		clock = 0;
-		// Add code as needed
-
-		this.cpuQueue = cpuQueue;
-		this.ioQueue = ioQueue;
-		this.maxCpuTime = maxCpuTime;
-		this.avgIoTime = avgIoTime;
+        // Add code as needed
+        io = new Io(ioQueue, avgIoTime, statistics, this);
+        cpu = new Cpu(cpuQueue, maxCpuTime, statistics, this, io);
+        io.addCpu(cpu);
     }
 
     /**
@@ -95,7 +93,7 @@ public class Simulator implements Constants
 	 * @param event	The event to be processed.
 	 */
 	private void processEvent(Event event) {
-		switch (event.getType()) {
+        switch (event.getType()) {
 			case NEW_PROCESS:
 				createProcess();
 				break;
@@ -138,12 +136,14 @@ public class Simulator implements Constants
 		// As long as there is enough memory, processes are moved from the memory queue to the cpu queue
 		while(p != null) {
 			
-			// TODO: Add this process to the CPU queue!
+			//  Done _TODO: Add this process to the CPU queue!
+            cpu.insertProcess(p);
+
 			// Also add new events to the event queue if needed
 
 			// Since we haven't implemented the CPU and I/O device yet,
 			// we let the process leave the system immediately, for now.
-			memory.processCompleted(p);
+			// no longer needed memory.processCompleted(p);
 			// Try to use the freed memory:
 			flushMemoryQueue();
 			// Update statistics
@@ -152,20 +152,24 @@ public class Simulator implements Constants
 			// Check for more free memory
 			p = memory.checkMemory(clock);
 		}
+        if (cpu.checkCpu() != null){
+            eventQueue.insertEvent(new Event(SWITCH_PROCESS,clock));
+        }
 	}
 
 	/**
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// Incomplete
+        // Done
+		cpu.use_cpu(); //this selects first process in the queue and processes it (as far as it gets)
 	}
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		// Incomplete
+		cpu.remove_process();
 	}
 
 	/**
@@ -173,7 +177,7 @@ public class Simulator implements Constants
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// Incomplete
+		io.use_io();
 	}
 
 	/**
@@ -181,7 +185,7 @@ public class Simulator implements Constants
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// Incomplete
+		io.completed_io();
 	}
 
 	/**
@@ -206,7 +210,7 @@ public class Simulator implements Constants
 	 * @param args	Parameters from the command line, they are ignored.
 	 */
 	public static void main(String args[]) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    	/*BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Please input system parameters: ");
 
 		System.out.print("Memory size (KB): ");
@@ -232,6 +236,23 @@ public class Simulator implements Constants
 		System.out.print("Average time between process arrivals (ms): ");
 		long avgArrivalInterval = readLong(reader);
 
-		SimulationGui gui = new SimulationGui(memorySize, maxCpuTime, avgIoTime, simulationLength, avgArrivalInterval);
+		SimulationGui gui = new SimulationGui(memorySize, maxCpuTime, avgIoTime, simulationLength, avgArrivalInterval);*/
+		SimulationGui gui = new SimulationGui((long) 2048, (long) 500, (long) 225, (long) 250000, (long) 5000);
 	}
+
+    public void queueEvent(int type, long time) {
+        eventQueue.insertEvent(new Event(type, time+clock));
+    }
+
+    public void queueEvent(Event e) {
+        eventQueue.insertEvent(e);
+    }
+
+    public void releaseMemory(Process p){
+        memory.processCompleted(p);
+    }
+
+    public void activeCPU(Process p){
+        gui.setCpuActive(p);
+    }
 }
